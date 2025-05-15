@@ -155,7 +155,7 @@ class StudentModel {
           ? DateTime.parse(map['dateOfBirth']) 
           : DateTime.now(),
       gender: map['gender'] != null 
-          ? Gender.fromString(map['gender']) 
+          ? GenderExtension.fromString(map['gender']) 
           : Gender.other,
       address: map['address'],
       classId: map['classId'] ?? '',

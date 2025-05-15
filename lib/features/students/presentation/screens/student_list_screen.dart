@@ -1,6 +1,8 @@
+import 'package:chikoro_pro/core/services/local_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../config/constants.dart';
 import '../../../../config/routes.dart';
@@ -472,7 +474,7 @@ class _AddEditStudentDialogState extends ConsumerState<_AddEditStudentDialog> {
         address: _addressController.text.trim().isNotEmpty 
             ? _addressController.text.trim() 
             : null,
-        classId: _isEditing ? widget.student!.classId : LocalStorageService.generateId(),
+        classId: _isEditing ? widget.student!.classId : const Uuid().v4(),
         className: _classNameController.text.trim(),
         section: _sectionController.text.trim(),
         rollNumber: int.parse(_rollNumberController.text.trim()),
@@ -637,10 +639,15 @@ class _AddEditStudentDialogState extends ConsumerState<_AddEditStudentDialog> {
               const SizedBox(height: 16),
               
               // Address
-              CustomTextField(
+              TextFormField(
                 controller: _addressController,
-                labelText: 'Address (Optional)',
-                hintText: 'Enter address',
+                decoration: InputDecoration(
+                  labelText: 'Address (Optional)',
+                  hintText: 'Enter address',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
                 maxLines: 2,
               ),
               const SizedBox(height: 24),
@@ -683,10 +690,15 @@ class _AddEditStudentDialogState extends ConsumerState<_AddEditStudentDialog> {
               const SizedBox(height: 16),
               
               // Roll number
-              CustomTextField(
+              TextFormField(
                 controller: _rollNumberController,
-                labelText: 'Roll Number',
-                hintText: 'e.g. 12',
+                decoration: InputDecoration(
+                  labelText: 'Roll Number',
+                  hintText: 'e.g. 12',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,

@@ -33,12 +33,12 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cardColor = color ?? theme.colorScheme.surface;
-    final border = hasBorder 
-        ? Border.all(
+    final borderSide = hasBorder 
+        ? BorderSide(
             color: borderColor ?? theme.colorScheme.outline.withOpacity(0.5),
             width: 1.0,
           )
-        : null;
+        : BorderSide.none;
     
     // Build card content
     Widget cardContent = Column(
@@ -71,7 +71,7 @@ class CustomCard extends StatelessWidget {
       margin: margin,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
-        side: border ?? BorderSide.none,
+        side: borderSide,
       ),
       color: cardColor,
       child: Padding(

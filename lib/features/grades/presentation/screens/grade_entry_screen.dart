@@ -445,11 +445,11 @@ class _GradeEntryScreenState extends ConsumerState<GradeEntryScreen> {
                         Expanded(
                           flex: 2,
                           child: CustomTextField(
-                            label: 'Assessment Title',
-                            hint: 'Enter title',
+                            labelText: 'Assessment Title',
+                            hintText: 'Enter title',
                             controller: _titleController,
                             validator: Validators.validateNotEmpty,
-                            prefixIcon: Icons.title,
+                            prefixIcon: const Icon(Icons.title),
                           ),
                         ),
                         
@@ -516,13 +516,13 @@ class _GradeEntryScreenState extends ConsumerState<GradeEntryScreen> {
                         // Total marks
                         Expanded(
                           child: CustomTextField(
-                            label: 'Total Marks',
-                            hint: 'Enter total marks',
+                            labelText: 'Total Marks',
+                            hintText: 'Enter total marks',
                             controller: _totalMarksController,
                             validator: Validators.validateNumber,
                             keyboardType: TextInputType.number,
-                            prefixIcon: Icons.score,
-                            onChanged: (value) {
+                            prefixIcon: const Icon(Icons.score),
+                            onSubmitted: (value) {
                               if (value.isNotEmpty) {
                                 try {
                                   _totalMarks = double.parse(value);
@@ -539,12 +539,15 @@ class _GradeEntryScreenState extends ConsumerState<GradeEntryScreen> {
                     const SizedBox(height: 16),
                     
                     // Description
-                    CustomTextField(
-                      label: 'Description (Optional)',
-                      hint: 'Enter assessment description',
+                    TextField(
                       controller: _descriptionController,
+                      decoration: InputDecoration(
+                        labelText: 'Description (Optional)',
+                        hintText: 'Enter assessment description',
+                        prefixIcon: const Icon(Icons.description),
+                        border: const OutlineInputBorder(),
+                      ),
                       maxLines: 2,
-                      prefixIcon: Icons.description,
                     ),
                   ],
                 ),

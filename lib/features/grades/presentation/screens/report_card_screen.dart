@@ -12,15 +12,13 @@ import '../../../shared/widgets/loading_indicator.dart';
 
 /// Screen for viewing student report cards
 class ReportCardScreen extends ConsumerStatefulWidget {
-  final String? classId;
-  final String? studentId;
-  final TermPeriod? term;
+  final String studentId;
+  final String termId;
   
   const ReportCardScreen({
     Key? key,
-    this.classId,
-    this.studentId,
-    this.term,
+    required this.studentId,
+    required this.termId,
   }) : super(key: key);
 
   @override
@@ -70,14 +68,8 @@ class _ReportCardScreenState extends ConsumerState<ReportCardScreen> {
     super.initState();
     
     // Set initial values from parameters
-    if (widget.classId != null) {
-      _selectedClass = _getClassNameById(widget.classId!);
-    } else if (_classes.isNotEmpty) {
+    if (_classes.isNotEmpty) {
       _selectedClass = _classes.first;
-    }
-    
-    if (widget.term != null) {
-      _selectedTerm = widget.term!;
     }
     
     _loadStudents();
@@ -109,8 +101,8 @@ class _ReportCardScreenState extends ConsumerState<ReportCardScreen> {
         _students = students;
         
         // If studentId is provided, set selected student
-        if (widget.studentId != null) {
-          _selectedStudent = _getStudentNameById(widget.studentId!);
+        if (widget.studentId.isNotEmpty) {
+          _selectedStudent = _getStudentNameById(widget.studentId);
         } else if (students.isNotEmpty) {
           _selectedStudent = students.first;
         }
@@ -269,7 +261,7 @@ class _ReportCardScreenState extends ConsumerState<ReportCardScreen> {
     Navigator.of(context).pushNamed(
       AppRoutes.addEditGrade,
       arguments: {
-        'classId': widget.classId,
+        'studentId': widget.studentId,
       },
     );
   }

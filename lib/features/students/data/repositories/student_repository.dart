@@ -98,7 +98,7 @@ class StudentRepository {
           await LocalStorageService.updateSyncStatus(
             box,
             id,
-            SyncStatus.completed,
+            SyncStatus.synced,
           );
           
           return StudentModel.fromMap(studentData);

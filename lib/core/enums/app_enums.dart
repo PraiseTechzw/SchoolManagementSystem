@@ -164,3 +164,29 @@ enum Gender {
   female,
   other,
 }
+
+/// Extension for Gender enum to add string conversion
+extension GenderExtension on Gender {
+  static Gender fromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'male':
+        return Gender.male;
+      case 'female':
+        return Gender.female;
+      default:
+        return Gender.other;
+    }
+  }
+  
+  /// Get display name for the gender
+  String get displayName {
+    switch (this) {
+      case Gender.male:
+        return 'Male';
+      case Gender.female:
+        return 'Female';
+      case Gender.other:
+        return 'Other';
+    }
+  }
+}

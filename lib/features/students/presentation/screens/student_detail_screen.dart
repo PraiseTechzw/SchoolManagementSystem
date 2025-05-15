@@ -779,7 +779,7 @@ class StudentDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(AppStrings.close),
+            child: Text('Close'),
           ),
         ],
       ),

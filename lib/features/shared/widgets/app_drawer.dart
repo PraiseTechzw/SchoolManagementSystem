@@ -71,13 +71,13 @@ class AppDrawer extends ConsumerWidget {
                   context,
                   'Teachers',
                   Icons.people,
-                  AppRoutes.teachersList,
+                  '#', // Placeholder until teachersList is defined
                 ),
                 _buildDrawerItem(
                   context,
                   'Classes',
                   Icons.class_,
-                  AppRoutes.classesList,
+                  '#', // Placeholder until classesList is defined
                 ),
                 _buildDrawerItem(
                   context,
@@ -89,31 +89,31 @@ class AppDrawer extends ConsumerWidget {
                   context,
                   'Fees & Payments',
                   Icons.payment,
-                  AppRoutes.feesList,
+                  AppRoutes.payment,
                 ),
                 _buildDrawerItem(
                   context,
                   'Grades',
                   Icons.grade,
-                  AppRoutes.gradesList,
+                  AppRoutes.gradeEntry,
                 ),
                 _buildDrawerItem(
                   context,
                   'Announcements',
                   Icons.announcement,
-                  AppRoutes.announcementsList,
+                  AppRoutes.announcement,
                 ),
                 _buildDrawerItem(
                   context,
                   'Reports',
                   Icons.bar_chart,
-                  AppRoutes.reports,
+                  '#', // Placeholder until reports is defined
                 ),
                 _buildDrawerItem(
                   context,
                   'Settings',
                   Icons.settings,
-                  AppRoutes.settings,
+                  '#', // Placeholder until settings is defined
                 ),
                 const Divider(),
                 _buildDrawerItem(
@@ -122,7 +122,8 @@ class AppDrawer extends ConsumerWidget {
                   Icons.logout,
                   AppRoutes.login,
                   onTap: () {
-                    ref.read(authControllerProvider.notifier).signOut();
+                    // TODO: Implement signOut using the correct provider
+                    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
                   },
                 ),
               ],
