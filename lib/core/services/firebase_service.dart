@@ -83,7 +83,7 @@ class FirebaseService {
       if (doc.exists && doc.data() != null) {
         final userData = doc.data()!;
         final role = userData['role'] as String? ?? 'student';
-        return UserRole.fromString(role);
+        return UserRoleExtension.fromString(role);
       }
       
       return UserRole.student;

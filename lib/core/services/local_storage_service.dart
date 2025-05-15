@@ -158,7 +158,7 @@ class LocalStorageService {
       
       await box.put(id, updatedItem);
       
-      if (status == SyncStatus.completed) {
+      if (status == SyncStatus.synced) {
         await removeFromSyncQueue(box.name, id);
       }
     }

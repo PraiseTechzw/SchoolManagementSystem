@@ -9,6 +9,11 @@ import '../services/connectivity_service.dart';
 class SyncUtils {
   static final ConnectivityService _connectivityService = ConnectivityService();
   
+  /// Check if device has internet connectivity
+  static Future<bool> checkConnectivity() async {
+    return await _connectivityService.checkConnectivity();
+  }
+  
   /// Synchronize an item between local storage and Firestore
   static Future<void> syncItem({
     required String boxName,
@@ -89,7 +94,7 @@ class SyncUtils {
       await LocalStorageService.updateSyncStatus(
         box,
         itemId,
-        SyncStatus.completed,
+        SyncStatus.synced,
       );
       
       debugPrint('Item synced to Firestore: $collectionName/$itemId');
@@ -103,7 +108,7 @@ class SyncUtils {
         await LocalStorageService.updateSyncStatus(
           box,
           itemId,
-          SyncStatus.error,
+          SyncStatus.failed,
         );
       }
     }
@@ -228,7 +233,7 @@ class SyncUtils {
               );
               
               // Add sync metadata
-              mergedData['syncStatus'] = SyncStatus.completed.toString();
+              mergedData['syncStatus'] = SyncStatus.synced.toString();
               
               // Save to local storage
               await box.put(id, mergedData);
@@ -239,7 +244,7 @@ class SyncUtils {
           final dataForLocal = {
             ...remoteData,
             'id': id,
-            'syncStatus': SyncStatus.completed.toString(),
+            'syncStatus': SyncStatus.synced.toString(),
           };
           
           // Save to local storage

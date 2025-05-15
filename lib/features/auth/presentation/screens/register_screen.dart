@@ -53,7 +53,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         fullName: _fullNameController.text.trim(),
-        role: UserRole.fromString(_selectedRole),
+        role: UserRoleExtension.fromString(_selectedRole),
       );
       
       // Registration successful, navigation will be handled by app_home.dart

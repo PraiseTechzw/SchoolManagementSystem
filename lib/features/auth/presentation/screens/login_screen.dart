@@ -81,7 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Language selector at the top right
                     Align(
                       alignment: Alignment.topRight,
-                      child: LanguageSelector(),
+                      child: const LanguageSelector(),
                     ),
 
                     // App logo and title

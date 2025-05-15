@@ -130,6 +130,7 @@ class AppStrings {
   static const String import = 'Import';
   static const String print = 'Print';
   static const String share = 'Share';
+  static const String send = 'Send';
   static const String yes = 'Yes';
   static const String no = 'No';
   static const String ok = 'OK';

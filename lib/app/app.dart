@@ -1,92 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import '../l10n/l10n.dart';
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Uncomment once generated
 
-import '../config/routes.dart';
+import '../config/app_config.dart';
+import '../config/routes/app_routes.dart';
 import '../config/themes.dart';
-import '../core/providers/app_providers.dart';
-import '../core/providers/auth_provider.dart';
-import '../features/auth/presentation/screens/login_screen.dart';
-import '../features/dashboard/presentation/screens/admin_dashboard.dart';
-import '../features/dashboard/presentation/screens/clerk_dashboard.dart';
-import '../features/dashboard/presentation/screens/teacher_dashboard.dart';
-import '../features/dashboard/presentation/screens/parent_dashboard.dart';
-import '../features/dashboard/presentation/screens/student_dashboard.dart';
 
+/// Main application widget
 class ChikoroPro extends ConsumerWidget {
-  const ChikoroPro({super.key});
+  const ChikoroPro({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
+    // Get current theme and locale from providers (to be added later)
+    final isDarkMode = ref.watch(isDarkModeProvider);
     final locale = ref.watch(localeProvider);
     
     return MaterialApp(
-      title: 'ChikoroPro',
+      title: AppConfig.appName,
+      debugShowCheckedModeBanner: false,
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
-      themeMode: themeMode,
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       locale: locale,
       localizationsDelegates: const [
-        S.delegate,
+        // AppLocalizations.delegate,  // Commented until the class is generated
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: S.delegate.supportedLocales,
-      initialRoute: AppRoutes.initial,
+      supportedLocales: const [
+        Locale('en', ''), // English
+        Locale('sw', ''), // Swahili
+        Locale('sn', ''), // Shona
+        Locale('nd', ''), // Northern Ndebele
+      ],
       onGenerateRoute: AppRoutes.onGenerateRoute,
-      home: const AppHome(),
+      initialRoute: AppRoutes.splash,
     );
   }
 }
 
-class AppHome extends ConsumerWidget {
-  const AppHome({super.key});
-  
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
-    
-    return authState.when(
-      data: (user) {
-        if (user == null) {
-          return const LoginScreen();
-        }
-        
-        final userRole = ref.watch(userRoleProvider);
-        return userRole.when(
-          data: (role) {
-            switch (role) {
-              case 'admin':
-                return const AdminDashboard();
-              case 'clerk':
-                return const ClerkDashboard();
-              case 'teacher':
-                return const TeacherDashboard();
-              case 'parent':
-                return const ParentDashboard();
-              case 'student':
-                return const StudentDashboard();
-              default:
-                return const LoginScreen();
-            }
-          },
-          loading: () => const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          error: (_, __) => const LoginScreen(),
-        );
-      },
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (_, __) => const LoginScreen(),
-    );
-  }
-}
+/// Theme mode provider
+final isDarkModeProvider = StateProvider<bool>((ref) => false);
+
+/// Locale provider
+final localeProvider = StateProvider<Locale?>((ref) => null);

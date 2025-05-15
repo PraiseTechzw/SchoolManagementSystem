@@ -154,7 +154,7 @@ class PdfService {
                                 fontSize: 12,
                               ),
                             ),
-                            if (payment.reference.isNotEmpty)
+                            if (payment.reference?.isNotEmpty == true)
                               pw.Text(
                                 'Reference: ${payment.reference}',
                                 style: pw.TextStyle(font: font, fontSize: 10),
@@ -278,8 +278,8 @@ class PdfService {
                           ),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            payment.notes.isNotEmpty
-                                ? payment.notes
+                            payment.notes?.isNotEmpty == true
+                                ? payment.notes!
                                 : 'Thank you for your payment.',
                             style: pw.TextStyle(
                               font: font,

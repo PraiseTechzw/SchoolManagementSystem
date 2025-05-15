@@ -104,7 +104,7 @@ class PaymentRepository {
           await LocalStorageService.updateSyncStatus(
             box,
             id,
-            SyncStatus.completed,
+            SyncStatus.synced,
           );
           
           return PaymentModel.fromMap(paymentData);
