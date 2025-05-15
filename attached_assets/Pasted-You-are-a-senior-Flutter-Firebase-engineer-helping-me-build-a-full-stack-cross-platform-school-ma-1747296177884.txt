@@ -1,0 +1,77 @@
+You are a senior Flutter + Firebase engineer helping me build a full-stack, cross-platform school management system called "ChikoroPro" designed for Zimbabwean schools in both rural and urban areas.
+
+**GOAL:**
+Build a role-based smart school system with **offline-first support** using **Flutter (Mobile, Web, Desktop)**. The app must support **user roles** (Admin, Clerk, Teacher, Parent, Student-readonly), and work with **local storage** (Hive or Isar) and **cloud sync** (Firebase Firestore + Auth). Target platforms: Android, iOS, Web, Windows, Linux, and macOS.
+
+---
+
+### SYSTEM REQUIREMENTS
+
+1. **Role-Based Access:**
+   - Admin: create users, setup school info, manage terms/classes
+   - Clerk: manage school fees, record payments, print receipts
+   - Teacher: mark attendance, enter grades, view class list
+   - Parent: view child’s performance, payments, announcements
+   - Student: view their own grades, attendance, timetable
+
+2. **Offline Capability:**
+   - Use Hive or Isar for mobile + desktop
+   - Firebase offline persistence fallback for Web
+   - Sync data when internet is available
+   - Notify user when sync is pending/completed
+
+3. **Core Features:**
+   - Student Registration & Profile Management
+   - Class and Subject Assignment
+   - Termly Fee Tracking (USD/ZWL)
+   - Attendance Management (Offline → Sync)
+   - Marks/Grades Entry & Auto GPA Calculation
+   - Report Card Export (PDF)
+   - Announcement Board (per class, school-wide)
+   - Local Backup/Restore (encrypted)
+   - SMS or Push Notification Integration
+   - Multilingual Support (English, Shona, Ndebele)
+
+4. **UI/UX:**
+   - Responsive design for desktop, web and mobile
+   - Role-based dashboard for each user type
+   - Material 3 or Tailwind-styled Flutter UI
+   - PWA support for browser installs
+
+5. **Tech Stack Required:**
+   - Flutter (stable release)
+   - Firebase Firestore
+   - Firebase Auth (email/phone)
+   - Hive or Isar (offline DB)
+   - flutter_pdf, path_provider, share_plus, etc.
+   - GetX or Riverpod for state management
+
+---
+
+### TASKS TO START WITH
+
+1. Scaffold Flutter project targeting web, mobile and desktop
+2. Implement Firebase initialization and multi-platform auth
+3. Build reusable login + onboarding screens with role-based routing
+4. Setup Hive/Isar schemas for offline storage of students, payments, attendance
+5. Sync logic between local DB and Firestore on internet availability
+6. Create UI dashboards per role (Admin, Teacher, Clerk, Parent)
+7. Build payment module (fees due, balances, add payments, export PDF receipt)
+8. Implement attendance entry & sync
+9. Create grades entry module (subject-wise)
+10. Add PDF generation logic for report cards
+11. Add announcement/message board per class/school
+12. Add backup/restore function (JSON export/import with encryption)
+13. Add optional SMS notification integration (Africa’s Talking)
+
+---
+
+### OUTPUT FORMATS
+
+- Mobile App (Android + iOS)
+- Web App (Installable PWA)
+- Desktop App (Windows/macOS/Linux)
+
+---
+
+Please generate a modular folder structure, starting codebase, and reusable UI components. Use clean architecture and recommend best state management approach.
