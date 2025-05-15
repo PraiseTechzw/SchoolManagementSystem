@@ -1,14 +1,15 @@
-/// Utility class for form validation
+/// Form field validators for the app
 class Validators {
-  /// Validate email address
+  /// Validate email
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
     
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegExp.hasMatch(value)) {
-      return 'Enter a valid email address';
+    // Use a regex to validate email format
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid email address';
     }
     
     return null;
@@ -27,13 +28,13 @@ class Validators {
     return null;
   }
   
-  /// Confirm passwords match
-  static String? validateConfirmPassword(String? password, String? confirmPassword) {
-    if (confirmPassword == null || confirmPassword.isEmpty) {
-      return 'Confirm password is required';
+  /// Validate confirm password
+  static String? validateConfirmPassword(String? value, String password) {
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
     }
     
-    if (password != confirmPassword) {
+    if (value != password) {
       return 'Passwords do not match';
     }
     
@@ -53,21 +54,6 @@ class Validators {
     return null;
   }
   
-  /// Validate phone number
-  static String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Phone number is required';
-    }
-    
-    // Allow for international formats
-    final phoneRegExp = RegExp(r'^\+?[0-9]{10,15}$');
-    if (!phoneRegExp.hasMatch(value.replaceAll(RegExp(r'\s+'), ''))) {
-      return 'Enter a valid phone number';
-    }
-    
-    return null;
-  }
-  
   /// Validate required field
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
@@ -77,60 +63,90 @@ class Validators {
     return null;
   }
   
-  /// Validate amount (numeric and positive)
-  static String? validateAmount(String? value) {
+  /// Validate phone number
+  static String? validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Amount is required';
+      return null; // Phone is optional
     }
     
-    final numericValue = double.tryParse(value);
-    if (numericValue == null) {
-      return 'Enter a valid number';
-    }
-    
-    if (numericValue <= 0) {
-      return 'Amount must be greater than zero';
+    // Allow + and digits only
+    final phoneRegex = RegExp(r'^\+?[0-9]{10,15}$');
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Please enter a valid phone number';
     }
     
     return null;
   }
   
-  /// Validate grade (0-100)
-  static String? validateGrade(String? value) {
+  /// Validate amount
+  static String? validateAmount(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Grade is required';
+      return 'Amount is required';
     }
     
-    final numericValue = double.tryParse(value);
-    if (numericValue == null) {
-      return 'Enter a valid number';
+    // Try to parse as double
+    try {
+      final amount = double.parse(value);
+      if (amount <= 0) {
+        return 'Amount must be greater than zero';
+      }
+    } catch (e) {
+      return 'Please enter a valid amount';
     }
     
-    if (numericValue < 0 || numericValue > 100) {
-      return 'Grade must be between 0 and 100';
+    return null;
+  }
+  
+  /// Validate integer
+  static String? validateInteger(String? value, String fieldName) {
+    if (value == null || value.isEmpty) {
+      return '$fieldName is required';
+    }
+    
+    // Try to parse as int
+    try {
+      final number = int.parse(value);
+      if (number < 0) {
+        return '$fieldName cannot be negative';
+      }
+    } catch (e) {
+      return 'Please enter a valid number for $fieldName';
     }
     
     return null;
   }
   
   /// Validate date
-  static String? validateDate(DateTime? value) {
+  static String? validateDate(DateTime? value, String fieldName) {
     if (value == null) {
-      return 'Date is required';
+      return '$fieldName is required';
+    }
+    
+    // Check if date is in the future
+    if (value.isAfter(DateTime.now())) {
+      return '$fieldName cannot be in the future';
     }
     
     return null;
   }
   
-  /// Validate student ID format
-  static String? validateStudentId(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Student ID is required';
+  /// Validate age
+  static String? validateAge(DateTime? value) {
+    if (value == null) {
+      return 'Date of birth is required';
     }
     
-    final idRegExp = RegExp(r'^[A-Za-z0-9-]+$');
-    if (!idRegExp.hasMatch(value)) {
-      return 'Enter a valid student ID';
+    // Check if age is reasonable (between 3 and 100 years)
+    final now = DateTime.now();
+    final difference = now.difference(value);
+    final age = difference.inDays ~/ 365;
+    
+    if (age < 3) {
+      return 'Student must be at least 3 years old';
+    }
+    
+    if (age > 100) {
+      return 'Please check the date of birth';
     }
     
     return null;

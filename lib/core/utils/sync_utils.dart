@@ -1,44 +1,118 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 
-import '../enums/app_enums.dart';
 import '../services/firebase_service.dart';
 import '../services/local_storage_service.dart';
-import '../services/connectivity_service.dart';
+import '../../config/app_config.dart';
+import '../enums/app_enums.dart';
 
-/// Utility class for handling data synchronization between local and cloud storage
+/// Utilities for handling data synchronization between local storage and Firebase
 class SyncUtils {
-  static final ConnectivityService _connectivityService = ConnectivityService();
+  static final Connectivity _connectivity = Connectivity();
+  static StreamSubscription<ConnectivityResult>? _subscription;
+  static bool _isSyncing = false;
+  static Timer? _syncTimer;
   
-  /// Synchronize an item between local storage and Firestore
-  static Future<void> syncItem({
-    required String boxName,
-    required String itemId,
-    required String collectionName,
-  }) async {
+  /// Start listening to connectivity changes
+  static void startListening() {
+    if (_subscription != null) return;
+    
+    _subscription = _connectivity.onConnectivityChanged.listen((result) {
+      if (result != ConnectivityResult.none) {
+        // When connection is restored, trigger sync
+        syncPendingData();
+      }
+    });
+    
+    // Start periodic sync timer
+    _startPeriodicSync();
+  }
+  
+  /// Stop listening to connectivity changes
+  static void stopListening() {
+    _subscription?.cancel();
+    _subscription = null;
+    _syncTimer?.cancel();
+    _syncTimer = null;
+  }
+  
+  /// Start periodic sync timer
+  static void _startPeriodicSync() {
+    _syncTimer?.cancel();
+    _syncTimer = Timer.periodic(
+      Duration(minutes: AppConfig.syncIntervalMinutes),
+      (_) => syncPendingData(),
+    );
+  }
+  
+  /// Check if device is currently connected to the internet
+  static Future<bool> checkConnectivity() async {
+    final result = await _connectivity.checkConnectivity();
+    return result != ConnectivityResult.none;
+  }
+  
+  /// Sync pending data to Firestore
+  static Future<void> syncPendingData() async {
+    if (_isSyncing) return;
+    
+    final isConnected = await checkConnectivity();
+    if (!isConnected) return;
+    
+    _isSyncing = true;
+    
     try {
-      // Check if internet is available
-      final isConnected = await _connectivityService.checkConnectivity();
-      if (!isConnected) {
-        debugPrint('Cannot sync item, no internet connection');
+      // Get the sync queue
+      final syncQueue = LocalStorageService.getSyncQueue();
+      if (syncQueue.isEmpty) {
+        _isSyncing = false;
         return;
       }
       
-      // Get the box based on name
+      debugPrint('Syncing ${syncQueue.length} items...');
+      
+      // Process each item in the queue
+      for (final item in syncQueue.toList()) {
+        final parts = item.split(':');
+        if (parts.length != 2) continue;
+        
+        final boxName = parts[0];
+        final itemId = parts[1];
+        
+        await _syncItem(boxName, itemId);
+      }
+      
+      // Update last sync timestamp
+      final now = DateTime.now();
+      await LocalStorageService.saveSetting(AppConfig.lastSyncKey, now.toIso8601String());
+      debugPrint('Sync completed successfully at ${now.toIso8601String()}');
+    } catch (e) {
+      debugPrint('Error syncing data: $e');
+    } finally {
+      _isSyncing = false;
+    }
+  }
+  
+  /// Sync a specific item to Firestore
+  static Future<void> _syncItem(String boxName, String itemId) async {
+    try {
+      // Get the box
       final box = _getBoxByName(boxName);
-      if (box == null) {
-        debugPrint('Invalid box name: $boxName');
-        return;
-      }
+      if (box == null) return;
       
-      // Get item from local storage
-      final localItem = LocalStorageService.getItemById(box, itemId);
-      if (localItem == null) {
-        debugPrint('Local item not found: $boxName/$itemId');
-        return;
-      }
+      // Get the item
+      final item = box.get(itemId);
+      if (item == null) return;
       
-      // Check if item is marked for deletion
-      final isDeleted = localItem['isDeleted'] as bool? ?? false;
+      // Convert to Map
+      final itemData = item is Map ? Map<String, dynamic>.from(item) : item as Map<String, dynamic>;
+      
+      // Check if it's marked as deleted
+      final isDeleted = itemData['isDeleted'] == true;
+      
+      // Get the collection name
+      final collectionName = _getCollectionName(boxName);
+      if (collectionName == null) return;
       
       if (isDeleted) {
         // Delete from Firestore
@@ -47,59 +121,68 @@ class SyncUtils {
           documentId: itemId,
         );
         
-        // Hard delete from local storage
+        // Hard delete from local storage after successful sync
         await LocalStorageService.hardDeleteItem(box, itemId);
-        
-        debugPrint('Item deleted from Firestore: $collectionName/$itemId');
-        return;
-      }
-      
-      // Get current timestamp
-      final now = DateTime.now().toIso8601String();
-      
-      // Prepare data for Firestore (remove sync metadata)
-      final dataForFirestore = Map<String, dynamic>.from(localItem)
-        ..remove('syncStatus')
-        ..addAll({
-          'lastSynced': now,
-        });
-      
-      // Check if document exists in Firestore
-      final docSnapshot = await FirebaseService.getDocument(
-        collection: collectionName,
-        documentId: itemId,
-      );
-      
-      if (docSnapshot.exists) {
-        // Update existing document
-        await FirebaseService.updateDocument(
+      } else {
+        // Try to get the document from Firestore first
+        final doc = await FirebaseService.getDocument(
           collection: collectionName,
           documentId: itemId,
-          data: dataForFirestore,
         );
-      } else {
-        // Create new document with ID
-        await FirebaseService.firestore
-            .collection(collectionName)
-            .doc(itemId)
-            .set(dataForFirestore);
+        
+        if (doc.exists) {
+          // Document exists in Firestore, merge data
+          final remoteData = doc.data()!;
+          
+          // Conflict resolution fields to check
+          final conflictFields = [
+            'lastUpdated',
+            'modifiedAt',
+            'updatedAt',
+            'timestamp',
+          ];
+          
+          // Merge local and remote data
+          final mergedData = FirebaseService.mergeData(
+            localData: itemData,
+            remoteData: remoteData,
+            conflictResolutionFields: conflictFields,
+          );
+          
+          // Update in Firestore
+          await FirebaseService.updateDocument(
+            collection: collectionName,
+            documentId: itemId,
+            data: mergedData,
+          );
+          
+          // Update local copy with merged data
+          mergedData['syncStatus'] = SyncStatus.completed.toString();
+          await box.put(itemId, mergedData);
+        } else {
+          // Document doesn't exist in Firestore, create it
+          itemData['syncStatus'] = SyncStatus.completed.toString();
+          
+          // Update in Firestore
+          await FirebaseService.updateDocument(
+            collection: collectionName,
+            documentId: itemId,
+            data: itemData,
+          );
+          
+          // Update local copy with sync status
+          await box.put(itemId, itemData);
+        }
+        
+        // Remove from sync queue
+        await LocalStorageService.removeFromSyncQueue(boxName, itemId);
       }
-      
-      // Update sync status in local storage
-      await LocalStorageService.updateSyncStatus(
-        box,
-        itemId,
-        SyncStatus.completed,
-      );
-      
-      debugPrint('Item synced to Firestore: $collectionName/$itemId');
     } catch (e) {
-      debugPrint('Error syncing item: $e');
+      debugPrint('Error syncing item $boxName:$itemId: $e');
       
-      // Get the box based on name
+      // Mark as error in local storage
       final box = _getBoxByName(boxName);
       if (box != null) {
-        // Update sync status to error
         await LocalStorageService.updateSyncStatus(
           box,
           itemId,
@@ -109,248 +192,73 @@ class SyncUtils {
     }
   }
   
-  /// Synchronize all pending items in the sync queue
-  static Future<void> syncPendingItems() async {
-    try {
-      // Check if internet is available
-      final isConnected = await _connectivityService.checkConnectivity();
-      if (!isConnected) {
-        debugPrint('Cannot sync pending items, no internet connection');
-        return;
-      }
-      
-      // Get sync queue
-      final syncQueue = LocalStorageService.getSyncQueue();
-      
-      if (syncQueue.isEmpty) {
-        debugPrint('No pending items to sync');
-        return;
-      }
-      
-      debugPrint('Syncing ${syncQueue.length} pending items');
-      
-      // Process each item in the queue
-      for (final item in syncQueue) {
-        // Parse box name and item ID
-        final parts = item.split(':');
-        if (parts.length != 2) continue;
-        
-        final boxName = parts[0];
-        final itemId = parts[1];
-        
-        // Map box name to collection name
-        final collectionName = _mapBoxToCollection(boxName);
-        
-        // Sync the item
-        await syncItem(
-          boxName: boxName,
-          itemId: itemId,
-          collectionName: collectionName,
-        );
-      }
-      
-      debugPrint('Sync completed for all pending items');
-    } catch (e) {
-      debugPrint('Error syncing pending items: $e');
-    }
-  }
-  
-  /// Synchronize items from Firestore to local storage
-  static Future<void> pullFromFirestore({
-    required String collectionName,
-    required String boxName,
-    DateTime? since,
-  }) async {
-    try {
-      // Check if internet is available
-      final isConnected = await _connectivityService.checkConnectivity();
-      if (!isConnected) {
-        debugPrint('Cannot pull from Firestore, no internet connection');
-        return;
-      }
-      
-      // Get the box based on name
-      final box = _getBoxByName(boxName);
-      if (box == null) {
-        debugPrint('Invalid box name: $boxName');
-        return;
-      }
-      
-      // Build query
-      List<List<dynamic>>? whereConditions;
-      
-      if (since != null) {
-        whereConditions = [
-          ['lastUpdated', '>=', since.toIso8601String()],
-        ];
-      }
-      
-      // Get documents from Firestore
-      final querySnapshot = await FirebaseService.getDocuments(
-        collection: collectionName,
-        whereConditions: whereConditions,
-      );
-      
-      // Process documents
-      for (final doc in querySnapshot.docs) {
-        final remoteData = doc.data();
-        final id = doc.id;
-        
-        // Check if document exists locally
-        final localItem = LocalStorageService.getItemById(box, id);
-        
-        if (localItem != null) {
-          // Check if local item is marked for deletion
-          final isLocalDeleted = localItem['isDeleted'] as bool? ?? false;
-          
-          if (isLocalDeleted) {
-            // Skip this document, it will be deleted during next sync
-            continue;
-          }
-          
-          // Check if remote data is newer
-          final localUpdated = localItem['lastUpdated'] as String? ?? '';
-          final remoteUpdated = remoteData['lastUpdated'] as String? ?? '';
-          
-          if (remoteUpdated.isNotEmpty && localUpdated.isNotEmpty) {
-            final localDate = DateTime.parse(localUpdated);
-            final remoteDate = DateTime.parse(remoteUpdated);
-            
-            if (remoteDate.isAfter(localDate)) {
-              // Remote data is newer, update local
-              final mergedData = FirebaseService.mergeData(
-                localData: localItem,
-                remoteData: remoteData,
-                conflictResolutionFields: [
-                  'name', 'description', 'amount', 'date', 'status',
-                  'type', 'score', 'subject', 'class', 'term',
-                ],
-              );
-              
-              // Add sync metadata
-              mergedData['syncStatus'] = SyncStatus.completed.toString();
-              
-              // Save to local storage
-              await box.put(id, mergedData);
-            }
-          }
-        } else {
-          // Document does not exist locally, create it
-          final dataForLocal = {
-            ...remoteData,
-            'id': id,
-            'syncStatus': SyncStatus.completed.toString(),
-          };
-          
-          // Save to local storage
-          await box.put(id, dataForLocal);
-        }
-      }
-      
-      debugPrint('Pull from Firestore completed for $collectionName');
-    } catch (e) {
-      debugPrint('Error pulling from Firestore: $e');
-    }
-  }
-  
-  /// Full synchronization process (push pending changes, then pull updates)
-  static Future<void> fullSync() async {
-    try {
-      // Push pending changes first
-      await syncPendingItems();
-      
-      // Pull updates for each collection
-      await pullFromFirestore(
-        collectionName: 'users',
-        boxName: 'user_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'students',
-        boxName: 'student_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'classes',
-        boxName: 'class_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'payments',
-        boxName: 'payment_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'attendance',
-        boxName: 'attendance_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'grades',
-        boxName: 'grade_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'announcements',
-        boxName: 'announcement_box',
-      );
-      
-      await pullFromFirestore(
-        collectionName: 'schools',
-        boxName: 'school_box',
-      );
-      
-      debugPrint('Full sync completed');
-    } catch (e) {
-      debugPrint('Error during full sync: $e');
-    }
-  }
-  
-  /// Get a Hive box by name
-  static dynamic _getBoxByName(String boxName) {
+  /// Get Hive box by name
+  static Box? _getBoxByName(String boxName) {
     switch (boxName) {
-      case 'user_box':
+      case AppConfig.userBox:
         return LocalStorageService.userBox;
-      case 'student_box':
+      case AppConfig.studentBox:
         return LocalStorageService.studentBox;
-      case 'class_box':
+      case AppConfig.classBox:
         return LocalStorageService.classBox;
-      case 'payment_box':
+      case AppConfig.paymentBox:
         return LocalStorageService.paymentBox;
-      case 'attendance_box':
+      case AppConfig.attendanceBox:
         return LocalStorageService.attendanceBox;
-      case 'grade_box':
+      case AppConfig.gradeBox:
         return LocalStorageService.gradeBox;
-      case 'announcement_box':
+      case AppConfig.announcementBox:
         return LocalStorageService.announcementBox;
-      case 'school_box':
+      case AppConfig.schoolBox:
         return LocalStorageService.schoolBox;
       default:
         return null;
     }
   }
   
-  /// Map box name to Firestore collection name
-  static String _mapBoxToCollection(String boxName) {
+  /// Get Firestore collection name by box name
+  static String? _getCollectionName(String boxName) {
     switch (boxName) {
-      case 'user_box':
-        return 'users';
-      case 'student_box':
-        return 'students';
-      case 'class_box':
-        return 'classes';
-      case 'payment_box':
-        return 'payments';
-      case 'attendance_box':
-        return 'attendance';
-      case 'grade_box':
-        return 'grades';
-      case 'announcement_box':
-        return 'announcements';
-      case 'school_box':
-        return 'schools';
+      case AppConfig.userBox:
+        return AppConfig.usersCollection;
+      case AppConfig.studentBox:
+        return AppConfig.studentsCollection;
+      case AppConfig.classBox:
+        return AppConfig.classesCollection;
+      case AppConfig.paymentBox:
+        return AppConfig.paymentsCollection;
+      case AppConfig.attendanceBox:
+        return AppConfig.attendanceCollection;
+      case AppConfig.gradeBox:
+        return AppConfig.gradesCollection;
+      case AppConfig.announcementBox:
+        return AppConfig.announcementsCollection;
+      case AppConfig.schoolBox:
+        return AppConfig.schoolsCollection;
       default:
-        return boxName.replaceAll('_box', '');
+        return null;
+    }
+  }
+  
+  /// Perform a full sync of all data
+  static Future<void> fullSync() async {
+    await syncPendingData();
+  }
+  
+  /// Get the number of pending sync items
+  static int getPendingSyncCount() {
+    return LocalStorageService.getSyncQueue().length;
+  }
+  
+  /// Get the last sync time
+  static DateTime? getLastSyncTime() {
+    final lastSync = LocalStorageService.getSetting(AppConfig.lastSyncKey) as String?;
+    if (lastSync == null) return null;
+    
+    try {
+      return DateTime.parse(lastSync);
+    } catch (e) {
+      return null;
     }
   }
 }
