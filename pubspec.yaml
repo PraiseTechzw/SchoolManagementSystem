@@ -1,0 +1,67 @@
+name: chikoro_pro
+description: A cross-platform school management system for Zimbabwean schools
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+  # Firebase
+  firebase_core: ^2.15.0
+  firebase_auth: ^4.7.2
+  cloud_firestore: ^4.8.4
+  firebase_storage: ^11.2.5
+  
+  # State Management
+  flutter_riverpod: ^2.3.6
+  riverpod_annotation: ^2.1.1
+  
+  # Local Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # UI
+  cupertino_icons: ^1.0.5
+  google_fonts: ^5.1.0
+  flutter_svg: ^2.0.7
+  material_design_icons_flutter: ^7.0.7296
+  
+  # Utils
+  intl: ^0.18.0
+  path_provider: ^2.1.0
+  share_plus: ^7.1.0
+  pdf: ^3.10.4
+  printing: ^5.11.0
+  uuid: ^3.0.7
+  connectivity_plus: ^4.0.2
+  flutter_secure_storage: ^8.0.0
+  flutter_native_splash: ^2.3.1
+  package_info_plus: ^4.1.0
+  url_launcher: ^6.1.12
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.2
+  hive_generator: ^2.0.0
+  build_runner: ^2.4.6
+  riverpod_generator: ^2.2.3
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/images/
+    - assets/icons/
+
+flutter_intl:
+  enabled: true
+  main_locale: en
+  output_dir: lib/l10n
