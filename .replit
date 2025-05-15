@@ -1,4 +1,4 @@
-modules = ["flutter"]
+modules = ["flutter", "dart", "nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
@@ -14,16 +14,20 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Flutter App Server"
+args = "Web App Server"
 
 [[workflows.workflow]]
-name = "Flutter App Server"
+name = "Web App Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "flutter run -d web-server --web-port 5000 --web-hostname 0.0.0.0"
+args = "npx http-server -p 5000 --cors"
 waitForPort = 5000
 
 [deployment]
 run = ["sh", "-c", "flutter run -d web-server --web-port 5000 --web-hostname 0.0.0.0"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChikoroPro - School Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <div class="logo">
+                <span class="material-icons">school</span>
+                <h1>ChikoroPro</h1>
+            </div>
+            <nav>
+                <div class="nav-button" id="loginBtn">Login</div>
+            </nav>
+        </header>
+
+        <main id="appContent" class="app-content">
+            <!-- Login Form -->
+            <div id="loginForm" class="login-form">
+                <div class="card">
+                    <h2>Welcome to ChikoroPro</h2>
+                    <p>School Management System for Zimbabwean Schools</p>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter your password">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role">Login as</label>
+                        <select id="role">
+                            <option value="admin">Administrator</option>
+                            <option value="clerk">Clerk</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="parent">Parent</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    
+                    <button id="loginFormBtn" class="button primary">Login</button>
+                    
+                    <div class="login-footer">
+                        <p>Forgot password? <a href="#">Reset it</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Templates -->
+            <div id="adminDashboard" class="dashboard admin-dashboard hidden">
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <span class="material-icons">admin_panel_settings</span>
+                        <h3>Admin Dashboard</h3>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li class="active"><span class="material-icons">dashboard</span> Overview</li>
+                        <li><span class="material-icons">people</span> Students</li>
+                        <li><span class="material-icons">groups</span> Staff</li>
+                        <li><span class="material-icons">payments</span> Finances</li>
+                        <li><span class="material-icons">settings</span> Settings</li>
+                        <li><span class="material-icons">logout</span> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div class="page-header">
+                        <h2>School Overview</h2>
+                        <div class="connectivity-status online">
+                            <span class="material-icons">cloud_done</span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon students">
+                                <span class="material-icons">school</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>538</h3>
+                                <p>Students</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon teachers">
+                                <span class="material-icons">person</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>42</h3>
+                                <p>Teachers</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon classes">
+                                <span class="material-icons">class</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>24</h3>
+                                <p>Classes</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon payments">
+                                <span class="material-icons">attach_money</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>$5,248</h3>
+                                <p>Fees Collected</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-row">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h3>Recent Activities</h3>
+                            </div>
+                            <div class="panel-content">
+                                <ul class="activity-list">
+                                    <li>
+                                        <span class="material-icons">paid</span>
+                                        <div class="activity-info">
+                                            <p>John Doe paid $50 for Term 2 fees</p>
+                                            <span class="time">2 hours ago</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <span class="material-icons">person_add</span>
+                                        <div class="activity-info">
+                                            <p>New student Sarah Smith enrolled</p>
+                                            <span class="time">5 hours ago</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <span class="material-icons">announcement</span>
+                                        <div class="activity-info">
+                                            <p>End of term examination schedule published</p>
+                                            <span class="time">Yesterday</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <span class="material-icons">book</span>
+                                        <div class="activity-info">
+                                            <p>Grade 7 exam results uploaded</p>
+                                            <span class="time">Yesterday</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h3>Fees Collection Progress</h3>
+                            </div>
+                            <div class="panel-content">
+                                <div class="chart-container">
+                                    <div class="chart-placeholder">
+                                        <div class="progress-chart">
+                                            <div class="progress-item">
+                                                <span class="label">Form 1</span>
+                                                <div class="progress-bar">
+                                                    <div class="progress" style="width: 75%"></div>
+                                                </div>
+                                                <span class="value">75%</span>
+                                            </div>
+                                            <div class="progress-item">
+                                                <span class="label">Form 2</span>
+                                                <div class="progress-bar">
+                                                    <div class="progress" style="width: 60%"></div>
+                                                </div>
+                                                <span class="value">60%</span>
+                                            </div>
+                                            <div class="progress-item">
+                                                <span class="label">Form 3</span>
+                                                <div class="progress-bar">
+                                                    <div class="progress" style="width: 85%"></div>
+                                                </div>
+                                                <span class="value">85%</span>
+                                            </div>
+                                            <div class="progress-item">
+                                                <span class="label">Form 4</span>
+                                                <div class="progress-bar">
+                                                    <div class="progress" style="width: 45%"></div>
+                                                </div>
+                                                <span class="value">45%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="clerkDashboard" class="dashboard clerk-dashboard hidden">
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <span class="material-icons">account_balance</span>
+                        <h3>Clerk Dashboard</h3>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li class="active"><span class="material-icons">dashboard</span> Overview</li>
+                        <li><span class="material-icons">payments</span> Record Payment</li>
+                        <li><span class="material-icons">receipt_long</span> Payments History</li>
+                        <li><span class="material-icons">description</span> Print Receipt</li>
+                        <li><span class="material-icons">logout</span> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div class="page-header">
+                        <h2>Payments Overview</h2>
+                        <div class="connectivity-status online">
+                            <span class="material-icons">cloud_done</span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon payments">
+                                <span class="material-icons">attach_money</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>$5,248</h3>
+                                <p>USD Collected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon payments-zwl">
+                                <span class="material-icons">currency_exchange</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>ZWL 1.24M</h3>
+                                <p>ZWL Collected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon receipts">
+                                <span class="material-icons">receipt</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>156</h3>
+                                <p>Receipts Today</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <span class="material-icons">sync</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>12</h3>
+                                <p>Pending Sync</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <button class="button primary">
+                            <span class="material-icons">add</span>
+                            New Payment
+                        </button>
+                        <button class="button secondary">
+                            <span class="material-icons">print</span>
+                            Print Receipt
+                        </button>
+                        <button class="button secondary">
+                            <span class="material-icons">sync</span>
+                            Sync Data
+                        </button>
+                    </div>
+                    
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Recent Payments</h3>
+                        </div>
+                        <div class="panel-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Receipt #</th>
+                                        <th>Student Name</th>
+                                        <th>Class</th>
+                                        <th>Amount</th>
+                                        <th>Currency</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>RC-2023001</td>
+                                        <td>John Doe</td>
+                                        <td>Form 3-A</td>
+                                        <td>50.00</td>
+                                        <td>USD</td>
+                                        <td>2023-05-15</td>
+                                        <td><span class="status completed">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>RC-2023002</td>
+                                        <td>Jane Smith</td>
+                                        <td>Form 2-B</td>
+                                        <td>9,500.00</td>
+                                        <td>ZWL</td>
+                                        <td>2023-05-15</td>
+                                        <td><span class="status completed">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>RC-2023003</td>
+                                        <td>Michael Brown</td>
+                                        <td>Form 1-A</td>
+                                        <td>100.00</td>
+                                        <td>USD</td>
+                                        <td>2023-05-15</td>
+                                        <td><span class="status pending">Pending</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>RC-2023004</td>
+                                        <td>Sarah Williams</td>
+                                        <td>Form 4-C</td>
+                                        <td>25,000.00</td>
+                                        <td>ZWL</td>
+                                        <td>2023-05-14</td>
+                                        <td><span class="status completed">Completed</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="teacherDashboard" class="dashboard teacher-dashboard hidden">
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <span class="material-icons">cast_for_education</span>
+                        <h3>Teacher Dashboard</h3>
+                    </div>
+                    <ul class="sidebar-menu">
+                        <li class="active"><span class="material-icons">dashboard</span> Overview</li>
+                        <li><span class="material-icons">people</span> My Classes</li>
+                        <li><span class="material-icons">fact_check</span> Attendance</li>
+                        <li><span class="material-icons">grading</span> Grades</li>
+                        <li><span class="material-icons">message</span> Messages</li>
+                        <li><span class="material-icons">logout</span> Logout</li>
+                    </ul>
+                </div>
+                <div class="main-content">
+                    <div class="page-header">
+                        <h2>Teacher Overview</h2>
+                        <div class="connectivity-status offline">
+                            <span class="material-icons">cloud_off</span>
+                            <span>Offline</span>
+                        </div>
+                    </div>
+                    
+                    <div class="teacher-info">
+                        <div class="card teacher-profile">
+                            <div class="teacher-avatar">
+                                <span class="material-icons">person</span>
+                            </div>
+                            <div class="teacher-details">
+                                <h3>Mr. Robert Moyo</h3>
+                                <p>Mathematics & Physics</p>
+                                <p>Form Teacher: Form 3-A</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon classes">
+                                <span class="material-icons">class</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>5</h3>
+                                <p>Classes</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon students">
+                                <span class="material-icons">school</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>187</h3>
+                                <p>Students</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon attendance">
+                                <span class="material-icons">fact_check</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>94%</h3>
+                                <p>Attendance</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <span class="material-icons">assignment_late</span>
+                            </div>
+                            <div class="stat-info">
+                                <h3>2</h3>
+                                <p>Pending Tasks</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-row">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h3>Today's Timetable</h3>
+                                <p>Monday, May 15</p>
+                            </div>
+                            <div class="panel-content">
+                                <ul class="timetable-list">
+                                    <li class="completed">
+                                        <div class="time">08:00 - 09:00</div>
+                                        <div class="class-info">
+                                            <h4>Mathematics</h4>
+                                            <p>Form 3-A</p>
+                                        </div>
+                                        <div class="status"><span class="material-icons">check_circle</span></div>
+                                    </li>
+                                    <li class="completed">
+                                        <div class="time">09:10 - 10:10</div>
+                                        <div class="class-info">
+                                            <h4>Physics</h4>
+                                            <p>Form 4-B</p>
+                                        </div>
+                                        <div class="status"><span class="material-icons">check_circle</span></div>
+                                    </li>
+                                    <li class="current">
+                                        <div class="time">10:30 - 11:30</div>
+                                        <div class="class-info">
+                                            <h4>Mathematics</h4>
+                                            <p>Form 2-C</p>
+                                        </div>
+                                        <div class="status"><span class="material-icons">schedule</span></div>
+                                    </li>
+                                    <li>
+                                        <div class="time">12:00 - 13:00</div>
+                                        <div class="class-info">
+                                            <h4>Physics</h4>
+                                            <p>Form 3-B</p>
+                                        </div>
+                                        <div class="status"></div>
+                                    </li>
+                                    <li>
+                                        <div class="time">14:00 - 15:00</div>
+                                        <div class="class-info">
+                                            <h4>Mathematics</h4>
+                                            <p>Form 1-A</p>
+                                        </div>
+                                        <div class="status"></div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h3>Recent Attendance</h3>
+                            </div>
+                            <div class="panel-content">
+                                <div class="attendance-summary">
+                                    <div class="attendance-stat">
+                                        <div class="attendance-circle">
+                                            <span class="value">94%</span>
+                                        </div>
+                                        <p>Form 3-A</p>
+                                    </div>
+                                    <div class="attendance-stat">
+                                        <div class="attendance-circle">
+                                            <span class="value">87%</span>
+                                        </div>
+                                        <p>Form 4-B</p>
+                                    </div>
+                                    <div class="attendance-stat">
+                                        <div class="attendance-circle">
+                                            <span class="value">91%</span>
+                                        </div>
+                                        <p>Form 2-C</p>
+                                    </div>
+                                </div>
+                                <div class="buttons-container">
+                                    <button class="button primary">
+                                        <span class="material-icons">fact_check</span>
+                                        Mark Attendance
+                                    </button>
+                                    <button class="button secondary">
+                                        <span class="material-icons">view_list</span>
+                                        View Records
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="parentDashboard" class="dashboard parent-dashboard hidden">
+                <!-- Parent Dashboard Content -->
+            </div>
+
+            <div id="studentDashboard" class="dashboard student-dashboard hidden">
+                <!-- Student Dashboard Content -->
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2023 ChikoroPro - School Management System. Offline-First. Built for Zimbabwe.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
