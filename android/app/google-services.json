@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "551556042270",
+    "project_id": "chikoropro",
+    "storage_bucket": "chikoropro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551556042270:android:2b39cd72a71aab4d88280f",
+        "android_client_info": {
+          "package_name": "school.management.appixia.co.zw.school_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5DwaHcAQs4R9nfCUhn-OSwuKd8_RpCTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

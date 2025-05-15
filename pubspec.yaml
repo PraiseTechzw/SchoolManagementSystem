@@ -33,7 +33,7 @@ dependencies:
   material_design_icons_flutter: ^7.0.7296
   
   # Utils
-  intl: ^0.18.0
+  intl: ^0.19.0
   path_provider: ^2.1.0
   share_plus: ^7.1.0
   pdf: ^3.10.4
@@ -44,6 +44,7 @@ dependencies:
   flutter_native_splash: ^2.3.1
   package_info_plus: ^4.1.0
   url_launcher: ^6.1.12
+  flutter_gen: ^5.10.0
   
 dev_dependencies:
   flutter_test:
@@ -57,9 +58,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
-  assets:
-    - assets/images/
-    - assets/icons/
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
 
 flutter_intl:
   enabled: true

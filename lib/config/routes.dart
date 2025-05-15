@@ -14,7 +14,6 @@ import '../features/fees/presentation/screens/receipt_screen.dart';
 import '../features/attendance/presentation/screens/attendance_screen.dart';
 import '../features/grades/presentation/screens/grade_entry_screen.dart';
 import '../features/grades/presentation/screens/report_card_screen.dart';
-import '../features/announcements/presentation/screens/announcement_screen.dart';
 
 class AppRoutes {
   static const String initial = '/';

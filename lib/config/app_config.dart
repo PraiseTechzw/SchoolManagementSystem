@@ -1,74 +1,74 @@
-/// Application configuration constants
+import 'package:flutter/foundation.dart';
+
+/// Configuration class for application-wide settings
 class AppConfig {
-  // App information
   static const String appName = 'ChikoroPro';
-  static const String appTagline = 'Smart School Management System';
   static const String appVersion = '1.0.0';
   
   // Firebase collection names
   static const String usersCollection = 'users';
-  static const String schoolsCollection = 'schools';
   static const String studentsCollection = 'students';
   static const String classesCollection = 'classes';
-  static const String subjectsCollection = 'subjects';
   static const String paymentsCollection = 'payments';
   static const String attendanceCollection = 'attendance';
   static const String gradesCollection = 'grades';
   static const String announcementsCollection = 'announcements';
+  static const String schoolsCollection = 'schools';
   
   // Hive box names
   static const String userBox = 'user_box';
-  static const String schoolBox = 'school_box';
   static const String studentBox = 'student_box';
   static const String classBox = 'class_box';
-  static const String subjectBox = 'subject_box';
   static const String paymentBox = 'payment_box';
   static const String attendanceBox = 'attendance_box';
   static const String gradeBox = 'grade_box';
   static const String announcementBox = 'announcement_box';
+  static const String schoolBox = 'school_box';
   static const String settingsBox = 'settings_box';
   
-  // Settings keys
-  static const String languageKey = 'language';
-  static const String themeKey = 'theme';
-  static const String notificationKey = 'notification';
-  static const String lastSyncKey = 'last_sync';
-  static const String activeSchoolKey = 'active_school';
-  static const String activeTermKey = 'active_term';
-  static const String academicYearKey = 'academic_year';
+  // Cache TTL in minutes
+  static const int cacheTtlMinutes = 60;
   
-  // Timeout durations
-  static const int connectionTimeout = 30; // seconds
-  static const int maxRetryAttempts = 3;
-  
-  // Fee configuration
-  static const double defaultUsdRate = 3500.0; // ZWL to USD exchange rate
-  
-  // Report configuration
-  static const int gradeAThreshold = 80;
-  static const int gradeBThreshold = 70;
-  static const int gradeCThreshold = 60;
-  static const int gradeDThreshold = 50;
-  static const int gradeFThreshold = 40;
-  
-  // App limits
-  static const int maxStudentsPerClass = 80;
-  static const int maxClassesPerSchool = 50;
-  static const int maxSubjectsPerClass = 15;
-  static const int maxAttachmentsSize = 10 * 1024 * 1024; // 10 MB
-  
-  // Sync configuration
+  // Sync config
   static const int syncIntervalMinutes = 30;
-  static const int maxOfflineDays = 30;
+  static const int maxSyncRetries = 5;
   
-  // Notification configuration
-  static const bool enableSmsNotifications = true;
-  static const bool enablePushNotifications = true;
-  
-  // API endpoints
-  static const String smsApiEndpoint = 'https://api.africastalking.com/version1/messaging';
-  
-  // Default values
+  // Default currency
   static const String defaultCurrency = 'USD';
-  static const String defaultLanguageCode = 'en';
+  static const List<String> supportedCurrencies = ['USD', 'ZWL'];
+  
+  // Default language
+  static const String defaultLanguage = 'en';
+  static const List<String> supportedLanguages = ['en', 'sn', 'nd'];
+  
+  // Payment types
+  static const List<String> paymentTypes = ['Cash', 'Bank Transfer', 'Mobile Money'];
+  
+  // Grade types
+  static const List<String> gradeTypes = ['Quiz', 'Assignment', 'Midterm', 'Final'];
+  
+  // Pagination limit
+  static const int paginationLimit = 20;
+  
+  // Get a human-readable device type
+  static String get deviceType {
+    if (kIsWeb) return 'Web';
+    if (defaultTargetPlatform == TargetPlatform.android) return 'Android';
+    if (defaultTargetPlatform == TargetPlatform.iOS) return 'iOS';
+    if (defaultTargetPlatform == TargetPlatform.macOS) return 'macOS';
+    if (defaultTargetPlatform == TargetPlatform.windows) return 'Windows';
+    if (defaultTargetPlatform == TargetPlatform.linux) return 'Linux';
+    return 'Unknown';
+  }
+  
+  // Check if the app is running on a mobile device
+  static bool get isMobile => 
+      defaultTargetPlatform == TargetPlatform.android || 
+      defaultTargetPlatform == TargetPlatform.iOS;
+  
+  // Check if the app is running on a desktop device
+  static bool get isDesktop => 
+      defaultTargetPlatform == TargetPlatform.macOS || 
+      defaultTargetPlatform == TargetPlatform.windows || 
+      defaultTargetPlatform == TargetPlatform.linux;
 }

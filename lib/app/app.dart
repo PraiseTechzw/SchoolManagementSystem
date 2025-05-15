@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import '../l10n/l10n.dart';
 
 import '../config/routes.dart';
 import '../config/themes.dart';
@@ -27,8 +28,13 @@ class ChikoroPro extends ConsumerWidget {
       darkTheme: AppThemes.darkTheme,
       themeMode: themeMode,
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       initialRoute: AppRoutes.initial,
       onGenerateRoute: AppRoutes.onGenerateRoute,
       home: const AppHome(),
